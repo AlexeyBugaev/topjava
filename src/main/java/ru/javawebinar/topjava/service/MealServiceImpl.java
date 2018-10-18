@@ -4,16 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.to.MealWithExceed;
+import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
-
-import java.util.Collection;
-
+import java.util.ArrayList;
+import java.util.List;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
-
+@Service
 public class MealServiceImpl implements MealService {
 
+    @Autowired
     private MealRepository repository;
+
+    private List<MealWithExceed> mealWithExceedList = new ArrayList<>();
 
     public MealServiceImpl(MealRepository repository) {
         this.repository = repository;
@@ -30,8 +34,12 @@ public class MealServiceImpl implements MealService {
     }
 
     @Override
-    public Meal get(int id) throws NotFoundException {
-        return checkNotFoundWithId(repository.get(id),id);
+    public MealWithExceed get(int id) throws NotFoundException {
+        getAll();
+        for (MealWithExceed mealWithExceed : mealWithExceedList) {
+            if(mealWithExceed.getId()==id) return mealWithExceed;
+        }
+        return null;
     }
 
     @Override
@@ -40,7 +48,8 @@ public class MealServiceImpl implements MealService {
     }
 
     @Override
-    public Collection<Meal> getAll() {
-        return repository.getAll();
+    public List<MealWithExceed> getAll() {
+        mealWithExceedList = MealsUtil.getWithExceeded(repository.getAll(),MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return mealWithExceedList;
     }
 }

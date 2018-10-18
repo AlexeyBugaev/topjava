@@ -1,23 +1,23 @@
 package ru.javawebinar.topjava.web.meal;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealWithExceed;
-import ru.javawebinar.topjava.util.MealsUtil;
-
-import java.util.Collection;
 import java.util.List;
 
-
+@Controller
 public class MealRestController {
+
+    @Autowired
     private MealService service;
 
     public MealRestController(MealService service) {
         this.service = service;
     }
 
-    public Collection<Meal> getAll(){
+    public List<MealWithExceed> getAll(){
         return service.getAll();
     }
 
@@ -26,12 +26,7 @@ public class MealRestController {
     }
 
     public MealWithExceed get(int id){
-        MealWithExceed mealWithExceed = null;
-        List<MealWithExceed> mealsWithExceedList = MealsUtil.getWithExceeded(getAll(),MealsUtil.DEFAULT_CALORIES_PER_DAY);
-        for (MealWithExceed meal:mealsWithExceedList) {
-            if(meal.getId().equals(id)) mealWithExceed = meal;
-        }
-        return mealWithExceed;
+        return service.get(id);
     }
 
     public void update(Meal meal){

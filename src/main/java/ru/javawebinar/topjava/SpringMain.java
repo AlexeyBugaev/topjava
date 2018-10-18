@@ -18,10 +18,14 @@ public class SpringMain {
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
             adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ROLE_ADMIN));
-            MealRestController mealRestController = (MealRestController) appCtx.getBean("controller");
+            adminUserController.create(new User(null, "Boshirov", "Boshirov@GRU.ru", "password", Role.ROLE_USER));
+            adminUserController.create(new User(null, "Petrov", "Petrov@GRU.ru", "password", Role.ROLE_USER));
+            System.out.println(adminUserController.getAll());
+            MealRestController mealRestController = (MealRestController) appCtx.getBean(MealRestController.class);
             System.out.println(mealRestController.getAll());
             mealRestController.create(new Meal(LocalDateTime.now(),"Breakfast",800));
             System.out.println(mealRestController.getAll());
+            System.out.println(mealRestController.get(7));
         }
     }
 }
