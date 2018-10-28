@@ -12,7 +12,6 @@ import org.springframework.util.CollectionUtils;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.Util;
-import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -42,18 +41,19 @@ public class JdbcMealRepositoryImpl implements MealRepository {
     }
 
     @Override
-    public Meal save(Meal meal, int mealId) {
+    public Meal save(Meal meal, int userId) {
         MapSqlParameterSource map = new MapSqlParameterSource()
-                .addValue("id",mealId)
-                .addValue("user_id",SecurityUtil.authUserId())
-                .addValue("datetime",meal.getDateTime())
+                .addValue("id",meal.getId())
+                .addValue("user_id",userId)
+                .addValue("datetime", meal.getDateTime())
                 .addValue("description",meal.getDescription())
                 .addValue("calories",meal.getCalories());
         if(meal.isNew()){
             Number newId = insertMeal.executeAndReturnKey(map);
             meal.setId(newId.intValue());
         }
-        else if (namedParameterJdbcTemplate.update("UPDATE meals SET user_id=:user_id, datetime=:datetime, description=:description, calories=:calories WHERE id=:id", map)==0){
+        else if (namedParameterJdbcTemplate.update("UPDATE meals SET user_id=:user_id, datetime=:datetime"+
+                ", description=:description, calories=:calories WHERE id=:id AND user_id=:user_id", map)==0){
             return null;
         }
         return meal;
