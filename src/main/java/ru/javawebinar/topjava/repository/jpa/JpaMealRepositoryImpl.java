@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-@Transactional
+@Transactional(readOnly = true)
 public class JpaMealRepositoryImpl implements MealRepository {
 
     @PersistenceContext
@@ -23,15 +23,16 @@ public class JpaMealRepositoryImpl implements MealRepository {
     @Override
     @Transactional
     public Meal save(Meal meal, int userId) {
+        User ref = em.getReference(User.class, userId);
+        meal.setUser(ref);
         if(meal.isNew()){
-            User ref = em.getReference(User.class, userId);
-            meal.setUser(ref);
             em.persist(meal);
             return meal;
         }
         else{
-            return em.merge(meal);
+            if(get(meal.getId(),userId)!=null) return em.merge(meal);
         }
+        return null;
     }
 
     @Override
@@ -42,23 +43,24 @@ public class JpaMealRepositoryImpl implements MealRepository {
     }
 
     @Override
-    @Transactional
     public Meal get(int id, int userId) {
-        Query query = em.createQuery("SELECT meal FROM Meal meal WHERE meal.id=:id AND meal.user.id=:user_id");
-        query.setParameter("id", id).setParameter("user_id", userId);
-        return em.getReference(Meal.class,id);
+        List<Meal> mealsForThisUserId = getAll(userId);
+        Meal mealForThisId = em.find(Meal.class, id);
+        if(mealsForThisUserId.contains(mealForThisId)) return mealForThisId;
+        else return null;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        TypedQuery<Meal> query = em.createQuery("SELECT meal FROM Meal meal WHERE meal.user.id=:user_id", Meal.class);
+        TypedQuery<Meal> query = em.createQuery("SELECT meal FROM Meal meal WHERE meal.user.id=:user_id ORDER BY meal.dateTime DESC", Meal.class);
         query.setParameter("user_id", userId);
         return query.getResultList();
     }
 
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        TypedQuery<Meal> query = em.createQuery("SELECT meal FROM Meal meal WHERE meal.user.id=:user_id AND meal.dateTime > :startDate AND meal.dateTime < :endDate", Meal.class);
+        TypedQuery<Meal> query = em.createQuery("SELECT meal FROM Meal meal WHERE meal.user.id=:user_id " +
+                "AND meal.dateTime >= :startDate AND meal.dateTime <= :endDate ORDER BY meal.dateTime DESC", Meal.class);
         query.setParameter("user_id", userId).setParameter("startDate", startDate).setParameter("endDate", endDate);
         return query.getResultList();
     }

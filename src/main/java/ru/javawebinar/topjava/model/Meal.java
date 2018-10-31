@@ -1,18 +1,21 @@
 package ru.javawebinar.topjava.model;
 
+import org.hibernate.validator.constraints.Range;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-
-
 
 @Entity
 @Table(name = "meals")
 
 public class Meal extends AbstractBaseEntity {
+
+    private static final String DELETE = "Meal.delete";
 
     @Column (name = "datetime")
     @NotNull
@@ -20,12 +23,14 @@ public class Meal extends AbstractBaseEntity {
 
     @Column (name = "description")
     @NotBlank
+    @Size(max = 100)
     private String description;
 
     @Column (name = "calories")
+    @Range(min = 10, max = 2000)
     private int calories;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     public Meal() {
