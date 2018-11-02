@@ -17,20 +17,21 @@ public class Meal extends AbstractBaseEntity {
 
     private static final String DELETE = "Meal.delete";
 
-    @Column (name = "datetime")
+    @Column(name = "datetime")
     @NotNull
     private LocalDateTime dateTime;
 
-    @Column (name = "description")
+    @Column(name = "description")
     @NotBlank
     @Size(max = 100)
     private String description;
 
-    @Column (name = "calories")
+    @Column(name = "calories")
     @Range(min = 10, max = 2000)
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     private User user;
 
     public Meal() {
