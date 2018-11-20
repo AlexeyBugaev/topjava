@@ -5,14 +5,17 @@
 <head>
     <title>Meal</title>
     <link rel="stylesheet" href="css/style.css">
+    <jsp:include page="fragments/headTag.jsp"/>
 </head>
 <body>
+<jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
     <h3><a href="index.html">Home</a></h3>
-    <h2>${param.action == 'create' ? 'Create meal' : 'Edit meal'}</h2>
+    <h2>${par == 1 ? 'Create meal' : 'Edit meal'}</h2>
     <hr>
+    <c:url value="/meals/save" var="save"/>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
-    <form method="post" action="meals">
+    <form method="post" action="${save}">
         <input type="hidden" name="id" value="${meal.id}">
         <dl>
             <dt>DateTime:</dt>
@@ -30,5 +33,6 @@
         <button onclick="window.history.back()" type="button">Cancel</button>
     </form>
 </section>
+<jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>
