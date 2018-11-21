@@ -11,7 +11,7 @@
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
     <h3><a href="index.html">Home</a></h3>
-    <h2>${par == 1 ? 'Create meal' : 'Edit meal'}</h2>
+    <h2>${isNew == true ? 'Create meal' : 'Edit meal'}</h2>
     <hr>
     <c:url value="/meals/save" var="save"/>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>

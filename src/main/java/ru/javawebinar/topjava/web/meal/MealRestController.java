@@ -7,23 +7,17 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.Util.orElse;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
 @Controller
-public class MealRestController {
+public class MealRestController extends AbstractMealController {
     private static final Logger log = LoggerFactory.getLogger(MealRestController.class);
-
-    private final MealService service;
 
     @Autowired
     public MealRestController(MealService service) {
@@ -60,23 +54,5 @@ public class MealRestController {
         assureIdConsistent(meal, id);
         log.info("update {} for user {}", meal, userId);
         service.update(meal, userId);
-    }
-
-    /**
-     * <ol>Filter separately
-     * <li>by date</li>
-     * <li>by time for every date</li>
-     * </ol>
-     */
-    public List<MealTo> getBetween(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-        int userId = SecurityUtil.authUserId();
-        log.info("getBetween dates({} - {}) time({} - {}) for user {}", startDate, endDate, startTime, endTime, userId);
-
-        List<Meal> mealsDateFiltered = service.getBetweenDates(
-                orElse(startDate, DateTimeUtil.MIN_DATE), orElse(endDate, DateTimeUtil.MAX_DATE), userId);
-
-        return MealsUtil.getFilteredWithExcess(mealsDateFiltered, SecurityUtil.authUserCaloriesPerDay(),
-                orElse(startTime, LocalTime.MIN), orElse(endTime, LocalTime.MAX)
-        );
     }
 }
