@@ -40,14 +40,12 @@ public class JspMealController extends AbstractMealController {
         int userId = SecurityUtil.authUserId();
         Meal meal = service.get(id, userId);
         model.addAttribute("meal", meal);
-        model.addAttribute("isNew", meal.isNew());
         return "mealForm";
     }
 
     @GetMapping(value = "/delete/{id}")
-    public String delete(@PathVariable("id") int id) {
-        int userId = SecurityUtil.authUserId();
-        service.delete(id, userId);
+    public String deleteMeal(@PathVariable("id") int id) {
+        delete(id);
         return "redirect:/meals";
     }
 
