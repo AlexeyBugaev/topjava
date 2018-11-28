@@ -25,5 +25,21 @@ class RootControllerTest extends AbstractControllerTest {
                                 hasProperty("name", is(USER.getName()))
                         )
                 )));
+    }@Test
+    void testMeals() throws Exception {
+        mockMvc.perform(get("/meals"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("meals"))
+                .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"))
+                .andExpect(model().attribute("meals", hasSize(8)))
+                .andExpect(model().attribute("meals", hasItem(
+                        allOf(
+                                hasProperty("id", is(START_SEQ)),
+                                hasProperty("name", is(USER.getName())),
+                                hasProperty("name", is(USER.getName())),
+                                hasProperty("name", is(USER.getName()))
+                        )
+                )));
     }
 }
