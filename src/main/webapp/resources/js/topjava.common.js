@@ -26,7 +26,7 @@ function updateTable() {
 }
 
 function save() {
-    var form = $("#detailsForm");
+    let form = $("#detailsForm");
     $.ajax({
         type: "POST",
         url: ajaxUrl,
