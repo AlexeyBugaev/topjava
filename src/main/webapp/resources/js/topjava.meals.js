@@ -27,10 +27,27 @@ $(function () {
         "order": [
             [
                 0,
-                "asc"
+                "desc"
             ]
         ]
     });
     makeEditable();
 });
+
+function  updateTable() {
+    let form = $("#filter");
+    $.ajax({
+        type: "GET",
+        url: ajaxUrl + "filter",
+        data: form.serialize(),
+        success: function(data) {
+            drawTable(data);
+        }
+    });
+}
+
+function cleanFilter() {
+    $("#filter").find(":input").val("");
+    updateTable();
+}
 

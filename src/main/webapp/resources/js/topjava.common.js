@@ -1,4 +1,3 @@
-var filterActive = false;
 function makeEditable() {
     $(".delete").click(function () {
         deleteRow($(this).attr("id"));
@@ -25,15 +24,6 @@ function deleteRow(id) {
         updateTable();
         successNoty("Deleted");
     });
-}
-
-function updateTable() {
-    if(filterActive) filter();
-    else {
-        $.get(ajaxUrl, function (data) {
-            datatableApi.clear().rows.add(data).draw();
-        });
-    }
 }
 
 function save() {
@@ -77,21 +67,6 @@ function failNoty(jqXHR) {
     }).show();
 }
 
-function filter() {
-    let form = $("#filter");
-    $.ajax({
-        type: "GET",
-        url: ajaxUrl + "filter",
-        data: form.serialize(),
-        success: function(data) {
-            datatableApi.clear().rows.add(data).draw();
-        }
-    });
-    filterActive = true;
-}
-
-function cleanFilter() {
-    $("#filter").find(":input").val("");
-    filterActive = false;
-    updateTable();
+function drawTable(data){
+    datatableApi.clear().rows.add(data).draw();
 }
