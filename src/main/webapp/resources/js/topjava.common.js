@@ -1,8 +1,8 @@
-function makeEditable() {
-    $(".delete").click(function () {
-        deleteRow($(this).attr("id"));
-    });
+let context, form;
 
+function makeEditable(ctx) {
+    context = ctx;
+    form = $('#detailsForm');
     $(document).ajaxError(function (event, jqXHR, options, jsExc) {
         failNoty(jqXHR);
     });
