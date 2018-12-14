@@ -1,3 +1,5 @@
+const mealAjaxUrl = "ajax/profile/meals/";
+
 function updateFilteredTable() {
     $.ajax({
         type: "GET",
@@ -13,27 +15,42 @@ function clearFilter() {
 
 $(function () {
     makeEditable({
-        ajaxUrl: "ajax/profile/meals/",
+        ajaxUrl: mealAjaxUrl,
         datatableApi: $("#datatable").DataTable({
+            "ajax": {
+                "url": mealAjaxUrl,
+                "dataSrc": ""
+            },
             "paging": false,
             "info": true,
             "columns": [
                 {
-                    "data": "dateTime"
+                    "data": "dateTime",
+                    "render": function (data, type, row) {
+                        return data;
+                    }
                 },
                 {
-                    "data": "description"
+                    "data": "description",
+                    "render": function (data, type, row) {
+                        return data;
+                    }
                 },
                 {
-                    "data": "calories"
+                    "data": "calories",
+                    "render": function (data, type, row) {
+                        return data;
+                    }
                 },
                 {
-                    "defaultContent": "Edit",
-                    "orderable": false
+                    "orderable": false,
+                    "defaultContent": "",
+                    "render": renderEditBtn
                 },
                 {
-                    "defaultContent": "Delete",
-                    "orderable": false
+                    "orderable": false,
+                    "defaultContent": "",
+                    "render": renderDeleteBtn
                 }
             ],
             "order": [
@@ -41,8 +58,16 @@ $(function () {
                     0,
                     "desc"
                 ]
-            ]
+            ],
+            "rowCallback": function (row, data, dataIndex) {
+                if (!data.excess) {
+                    $(row).css("color", "green");
+                }
+                else $(row).css("color", "red");
+            }
         }),
-        updateTable: updateFilteredTable
+        updateTable: function () {
+            updateFilteredTable();
+        }
     });
 });

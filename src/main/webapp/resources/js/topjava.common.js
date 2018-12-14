@@ -47,6 +47,7 @@ function save() {
         url: context.ajaxUrl,
         data: form.serialize()
     }).done(function () {
+        debugger;
         $("#editRow").modal("hide");
         context.updateTable();
         successNoty("common.saved");
