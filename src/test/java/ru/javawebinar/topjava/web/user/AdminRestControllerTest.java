@@ -96,6 +96,16 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void testUpdateInvalid() throws Exception {
+        User invalid = new User(USER_ID,null,null,null,0,Role.ROLE_ADMIN,Role.ROLE_USER);
+        mockMvc.perform(put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(invalid)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void testCreate() throws Exception {
         User expected = new User(null, "New", "new@gmail.com", "newPass", 2300, Role.ROLE_USER, Role.ROLE_ADMIN);
         ResultActions action = mockMvc.perform(post(REST_URL)
@@ -109,6 +119,16 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
         assertMatch(returned, expected);
         assertMatch(userService.getAll(), ADMIN, expected, USER);
+    }
+
+    @Test
+    void testCreateInvalid() throws Exception {
+        User invalid = new User(null, "New", null, null, 0, Role.ROLE_USER, Role.ROLE_ADMIN);
+        ResultActions action = mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(jsonWithPassword(invalid, "newPass")))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
