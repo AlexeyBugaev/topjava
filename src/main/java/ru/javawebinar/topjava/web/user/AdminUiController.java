@@ -48,7 +48,6 @@ public class AdminAjaxController extends AbstractUserController {
         } else {
             super.update(userTo, userTo.getId());
         }
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
